@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Poker Tracker Final</title>
+
+<style>
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: radial-gradient(circle, #021d13, #000);
+    color: white;
+    padding: 15px;
+}
+
+.container {
+    max-width: 900px;
+    margin: auto;
+}
+
+h1 {
+    text-align: center;
+    font-size: 22px;
+}
+
+.card {
+    background: rgba(255,255,255,0.08);
+    padding: 12px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+}
+
+/* Player card layout */
+.player-card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Labels */
+.label {
+    font-size: 12px;
+    opacity: 0.7;
+    margin-bottom: 3px;
+}
+
+input {
+    padding: 8px;
+    border-radius: 6px;
+    border: none;
+    width: 100%;
+}
+
+/* Chips */
+.chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.chip {
+    background: #111;
+    border: 2px solid #00ff88;
+    border-radius: 20px;
+    padding: 6px 10px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.chip:hover {
+    background: #00ff88;
+    color: black;
+}
+
+.chip.minus {
+    border-color: #ff4d4d;
+}
+
+.chip.minus:hover {
+    background: #ff4d4d;
+    color: white;
+}
+
+.value-box {
+    font-size: 13px;
+}
+
+.profit { color: #00ff88; font-weight: bold; }
+.loss { color: #ff4d4d; font-weight: bold; }
+
+button {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    margin-top: 10px;
+}
+
+.reset {
+    background: #d32f2f;
+    color: white;
+}
+
+.summary, .settlement {
+    margin-top: 15px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🃏 Poker Tracker ₹</h1>
+
+<div class="card">
+    <div class="label">Base Buy-in Value (₹)</div>
+    <input id="baseValue" type="number" value="2000" onchange="calculate()">
+</div>
+
+<div id="players"></div>
+
+<button class="reset" onclick="resetAll()">Reset</button>
+
+<div class="card summary">
+    <div>Total Buy-in: ₹ <span id="totalBuy">0</span></div>
+    <div>Total Cash-out: ₹ <span id="totalCash">0</span></div>
+    <div>Balance: ₹ <span id="balance">0</span></div>
+</div>
+
+<div class="card settlement">
+    <h3>💸 Who Pays Whom</h3>
+    <div id="settlementList"></div>
+</div>
+
+</div>
+
+<script>
+const container = document.getElementById("players");
+
+let data = {};
+
+// Create players
+for (let i = 1; i <= 10; i++) {
+    data[i] = { buy: 0, cash: 0 };
+
+    const row = document.createElement("div");
+    row.className = "card player-card";
+
+    row.innerHTML = `
+        <div style="font-weight:bold;">🧑 Player ${i}</div>
+
+        <div>
+            <div class="label">Name</div>
+            <input id="name${i}" placeholder="Enter name">
+        </div>
+
+        <div>
+            <div class="label">Buy-in Chips</div>
+            <div class="chips">
+                <div class="chip" onclick="addChip(${i}, 'buy', 1)">+1</div>
+                <div class="chip" onclick="addChip(${i}, 'buy', 5)">+5</div>
+                <div class="chip" onclick="addChip(${i}, 'buy', 10)">+10</div>
+                <div class="chip minus" onclick="addChip(${i}, 'buy', -1)">-1</div>
+                <div class="chip minus" onclick="addChip(${i}, 'buy', -5)">-5</div>
+                <div class="chip minus" onclick="addChip(${i}, 'buy', -10)">-10</div>
+            </div>
+            <div class="value-box">
+                Units: <span id="buyUnits${i}">0</span> | ₹ <span id="buyAmt${i}">0</span>
+            </div>
+        </div>
+
+        <div>
+            <div class="label">Cash-out Chips</div>
+            <div class="chips">
+                <div class="chip" onclick="addChip(${i}, 'cash', 1)">+1</div>
+                <div class="chip" onclick="addChip(${i}, 'cash', 5)">+5</div>
+                <div class="chip" onclick="addChip(${i}, 'cash', 10)">+10</div>
+                <div class="chip minus" onclick="addChip(${i}, 'cash', -1)">-1</div>
+                <div class="chip minus" onclick="addChip(${i}, 'cash', -5)">-5</div>
+                <div class="chip minus" onclick="addChip(${i}, 'cash', -10)">-10</div>
+            </div>
+            <div class="value-box">
+                Units: <span id="cashUnits${i}">0</span> | ₹ <span id="cashAmt${i}">0</span>
+            </div>
+        </div>
+
+        <div>
+            <div class="label">Profit / Loss</div>
+            <div id="pl${i}">₹ 0</div>
+        </div>
+    `;
+
+    container.appendChild(row);
+}
+
+// Add / remove chips
+function addChip(id, type, val) {
+    data[id][type] += val;
+    if (data[id][type] < 0) data[id][type] = 0;
+    calculate();
+}
+
+// Main calculation
+function calculate() {
+    let base = parseFloat(document.getElementById("baseValue").value) || 2000;
+
+    let totalBuy = 0, totalCash = 0;
+    let players = [];
+
+    for (let i = 1; i <= 10; i++) {
+        let name = document.getElementById(`name${i}`).value || `P${i}`;
+
+        let buy = data[i].buy * base;
+        let cash = data[i].cash * base;
+
+        document.getElementById(`buyUnits${i}`).innerText = data[i].buy;
+        document.getElementById(`cashUnits${i}`).innerText = data[i].cash;
+        document.getElementById(`buyAmt${i}`).innerText = buy;
+        document.getElementById(`cashAmt${i}`).innerText = cash;
+
+        totalBuy += buy;
+        totalCash += cash;
+
+        let pl = cash - buy;
+
+        let el = document.getElementById(`pl${i}`);
+        el.innerText = `₹ ${pl}`;
+        el.className = pl > 0 ? "profit" : pl < 0 ? "loss" : "";
+
+        if (buy > 0 || cash > 0) {
+            players.push({ name, balance: pl });
+        }
+    }
+
+    document.getElementById("totalBuy").innerText = totalBuy;
+    document.getElementById("totalCash").innerText = totalCash;
+
+    let balance = totalCash - totalBuy;
+    document.getElementById("balance").innerText = balance;
+
+    calculateSettlement(players);
+}
+
+// Settlement logic
+function calculateSettlement(players) {
+    let creditors = players.filter(p => p.balance > 0);
+    let debtors = players.filter(p => p.balance < 0)
+        .map(p => ({ ...p, balance: -p.balance }));
+
+    let result = "";
+    let i = 0, j = 0;
+
+    while (i < debtors.length && j < creditors.length) {
+        let amt = Math.min(debtors[i].balance, creditors[j].balance);
+
+        result += `<div>${debtors[i].name} ➝ ${creditors[j].name} : ₹ ${amt}</div>`;
+
+        debtors[i].balance -= amt;
+        creditors[j].balance -= amt;
+
+        if (debtors[i].balance === 0) i++;
+        if (creditors[j].balance === 0) j++;
+    }
+
+    document.getElementById("settlementList").innerHTML =
+        result || "All settled ✅";
+}
+
+// Reset
+function resetAll() {
+    for (let i = 1; i <= 10; i++) {
+        data[i] = { buy: 0, cash: 0 };
+        document.getElementById(`name${i}`).value = "";
+    }
+    calculate();
+}
+
+// Initial load
+calculate();
+</script>
+
+</body>
+</html>
