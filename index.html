@@ -2,283 +2,408 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Poker Tracker Final</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Felt — Poker Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-body {
-    font-family: 'Segoe UI', sans-serif;
-    background: radial-gradient(circle, #021d13, #000);
-    color: white;
-    padding: 15px;
+:root{
+  --bg:#07120d;
+  --bg2:#0c1f16;
+  --felt:#11422e;
+  --felt-edge:#0a2c1e;
+  --gold:#e8c468;
+  --gold-soft:#caa84a;
+  --cream:#f4ecd8;
+  --green:#3ddc84;
+  --green-dim:#1f8a52;
+  --red:#ff6b6b;
+  --red-dim:#a8324a;
+  --ink:#e9efe9;
+  --muted:#7e988a;
+  --line:rgba(232,196,104,.18);
+  --card:rgba(255,255,255,.035);
+  --card-hi:rgba(255,255,255,.06);
+  --shadow:0 18px 40px -12px rgba(0,0,0,.7);
+  --r:18px;
 }
-
-.container {
-    max-width: 900px;
-    margin: auto;
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  font-family:'Outfit',sans-serif;
+  background:
+    radial-gradient(120% 80% at 50% -10%, #143a28 0%, transparent 55%),
+    radial-gradient(140% 100% at 50% 120%, #0a2418 0%, transparent 60%),
+    var(--bg);
+  color:var(--ink);
+  min-height:100vh;
+  padding:env(safe-area-inset-top) 14px calc(120px + env(safe-area-inset-bottom));
+  line-height:1.5;
+  overflow-x:hidden;
 }
-
-h1 {
-    text-align: center;
-    font-size: 22px;
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");
+  mix-blend-mode:overlay;
 }
+.wrap{max-width:560px;margin:auto;position:relative;z-index:1}
 
-.card {
-    background: rgba(255,255,255,0.08);
-    padding: 12px;
-    border-radius: 12px;
-    margin-bottom: 12px;
+/* ---- Header ---- */
+header{text-align:center;padding:26px 0 18px}
+.suit-row{font-size:15px;letter-spacing:8px;color:var(--gold);opacity:.75;margin-bottom:6px}
+h1{
+  font-family:'Fraunces',serif;font-weight:600;font-size:34px;letter-spacing:-.5px;
+  background:linear-gradient(180deg,#fbe9b8,var(--gold) 60%,var(--gold-soft));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
 }
+.tagline{color:var(--muted);font-size:13px;letter-spacing:1.5px;text-transform:uppercase;margin-top:4px}
 
-/* Player card layout */
-.player-card {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+/* ---- Setup bar ---- */
+.setup{
+  background:linear-gradient(165deg,var(--card-hi),var(--card));
+  border:1px solid var(--line);border-radius:var(--r);
+  padding:14px 16px;margin-bottom:14px;box-shadow:var(--shadow);
+  display:flex;gap:14px;align-items:center;flex-wrap:wrap;
 }
-
-/* Labels */
-.label {
-    font-size: 12px;
-    opacity: 0.7;
-    margin-bottom: 3px;
+.setup .field{flex:1;min-width:130px}
+.lbl{font-size:11px;letter-spacing:1.4px;text-transform:uppercase;color:var(--muted);margin-bottom:5px;display:block}
+.inp{
+  width:100%;background:rgba(0,0,0,.32);border:1px solid var(--line);
+  color:var(--cream);border-radius:11px;padding:11px 13px;font-family:'Outfit';font-size:16px;
+  transition:border-color .2s, box-shadow .2s;
 }
+.inp:focus{outline:none;border-color:var(--gold-soft);box-shadow:0 0 0 3px rgba(232,196,104,.12)}
+.inp::placeholder{color:#5f7468}
 
-input {
-    padding: 8px;
-    border-radius: 6px;
-    border: none;
-    width: 100%;
+/* ---- Stats strip ---- */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:16px}
+.stat{
+  background:var(--card);border:1px solid var(--line);border-radius:14px;
+  padding:12px 10px;text-align:center;
 }
+.stat .k{font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted)}
+.stat .v{font-family:'Fraunces',serif;font-weight:600;font-size:19px;margin-top:3px;color:var(--cream)}
+.stat .v.ok{color:var(--green)} .stat .v.bad{color:var(--red)}
 
-/* Chips */
-.chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
+/* ---- Player cards ---- */
+.players{display:flex;flex-direction:column;gap:13px}
+.pcard{
+  position:relative;background:linear-gradient(168deg,var(--card-hi),var(--card));
+  border:1px solid var(--line);border-radius:var(--r);padding:15px 15px 16px;
+  box-shadow:var(--shadow);overflow:hidden;
+  animation:rise .5s cubic-bezier(.2,.8,.2,1) both;
 }
-
-.chip {
-    background: #111;
-    border: 2px solid #00ff88;
-    border-radius: 20px;
-    padding: 6px 10px;
-    cursor: pointer;
-    font-size: 12px;
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.pcard::before{
+  content:"";position:absolute;left:0;top:0;bottom:0;width:4px;
+  background:linear-gradient(var(--green),var(--green-dim));opacity:.55;transition:.3s;
 }
+.pcard.loss::before{background:linear-gradient(var(--red),var(--red-dim))}
+.pcard.flat::before{background:linear-gradient(var(--gold),var(--gold-soft));opacity:.3}
 
-.chip:hover {
-    background: #00ff88;
-    color: black;
+.phead{display:flex;align-items:center;gap:11px;margin-bottom:14px}
+.avatar{
+  width:40px;height:40px;border-radius:12px;flex:none;display:grid;place-items:center;
+  font-family:'Fraunces',serif;font-weight:600;font-size:17px;color:#08160f;
+  background:linear-gradient(150deg,var(--gold),var(--gold-soft));
 }
-
-.chip.minus {
-    border-color: #ff4d4d;
+.pname{
+  flex:1;background:transparent;border:none;border-bottom:1px solid transparent;
+  color:var(--cream);font-family:'Outfit';font-weight:600;font-size:18px;padding:4px 2px;
+  transition:border-color .2s;
 }
-
-.chip.minus:hover {
-    background: #ff4d4d;
-    color: white;
+.pname:focus{outline:none;border-bottom-color:var(--gold-soft)}
+.pname::placeholder{color:#5f7468;font-weight:500}
+.pl-badge{
+  font-family:'Fraunces',serif;font-weight:600;font-size:17px;white-space:nowrap;
+  padding:3px 0;color:var(--muted);
 }
+.pl-badge.profit{color:var(--green)} .pl-badge.loss{color:var(--red)}
 
-.value-box {
-    font-size: 13px;
+.seg{margin-bottom:11px}
+.seg:last-child{margin-bottom:0}
+.seg-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.seg-lbl{font-size:11px;letter-spacing:1.3px;text-transform:uppercase;color:var(--muted)}
+.seg-val{font-size:13px;color:var(--cream)}
+.seg-val b{font-family:'Fraunces',serif;color:var(--gold);font-weight:600}
+
+.chips{display:flex;gap:6px}
+.chip{
+  flex:1;border-radius:11px;padding:9px 0;font-size:14px;font-weight:600;cursor:pointer;
+  border:1px solid var(--green-dim);background:rgba(61,220,132,.07);color:var(--green);
+  transition:transform .08s, background .15s, box-shadow .15s;user-select:none;text-align:center;
 }
-
-.profit { color: #00ff88; font-weight: bold; }
-.loss { color: #ff4d4d; font-weight: bold; }
-
-button {
-    width: 100%;
-    padding: 10px;
-    border-radius: 8px;
-    border: none;
-    margin-top: 10px;
+.chip:active{transform:scale(.92)}
+.chip.add:hover{background:rgba(61,220,132,.16);box-shadow:0 0 0 1px var(--green-dim)}
+.chip.sub{border-color:var(--red-dim);background:rgba(255,107,107,.06);color:var(--red)}
+.chip.sub:hover{background:rgba(255,107,107,.14);box-shadow:0 0 0 1px var(--red-dim)}
+.count{
+  min-width:46px;display:grid;place-items:center;font-family:'Fraunces',serif;
+  font-weight:600;font-size:17px;color:var(--cream);
+  background:rgba(0,0,0,.3);border-radius:11px;border:1px solid var(--line);
 }
-
-.reset {
-    background: #d32f2f;
-    color: white;
+.pcard .remove{
+  position:absolute;top:11px;right:11px;width:26px;height:26px;border-radius:8px;
+  background:rgba(0,0,0,.25);border:1px solid var(--line);color:var(--muted);
+  font-size:15px;cursor:pointer;display:none;place-items:center;line-height:1;
 }
+.pcard:hover .remove{display:grid}
+.pcard .remove:hover{color:var(--red);border-color:var(--red-dim)}
 
-.summary, .settlement {
-    margin-top: 15px;
+/* ---- Settlement ---- */
+.settle{
+  margin-top:18px;background:linear-gradient(168deg,var(--card-hi),var(--card));
+  border:1px solid var(--line);border-radius:var(--r);padding:18px;box-shadow:var(--shadow);
 }
+.settle h3{font-family:'Fraunces',serif;font-weight:600;font-size:19px;color:var(--cream);margin-bottom:13px;display:flex;align-items:center;gap:8px}
+.pay{
+  display:flex;align-items:center;gap:10px;padding:11px 13px;border-radius:13px;
+  background:rgba(0,0,0,.25);border:1px solid var(--line);margin-bottom:8px;font-size:15px;
+  animation:rise .4s both;
+}
+.pay:last-child{margin-bottom:0}
+.pay .from{color:var(--red);font-weight:600} .pay .to{color:var(--green);font-weight:600}
+.pay .arrow{color:var(--gold);font-size:13px}
+.pay .amt{margin-left:auto;font-family:'Fraunces',serif;font-weight:600;color:var(--gold);white-space:nowrap}
+.settled{text-align:center;color:var(--muted);padding:14px 0;font-size:15px}
+.warn{text-align:center;color:var(--red);font-size:13px;padding:6px 0 0}
+
+/* ---- Floating action bar ---- */
+.dock{
+  position:fixed;left:0;right:0;bottom:0;z-index:20;
+  padding:12px 14px calc(12px + env(safe-area-inset-bottom));
+  background:linear-gradient(0deg,rgba(7,18,13,.97) 60%,transparent);
+  display:flex;gap:10px;max-width:588px;margin:auto;
+}
+.btn{
+  flex:1;border:none;border-radius:14px;padding:15px;font-family:'Outfit';font-weight:600;
+  font-size:15px;cursor:pointer;letter-spacing:.3px;transition:transform .08s,filter .15s;
+}
+.btn:active{transform:scale(.97)}
+.btn.add{background:linear-gradient(150deg,var(--gold),var(--gold-soft));color:#08160f}
+.btn.add:hover{filter:brightness(1.06)}
+.btn.reset{background:rgba(255,107,107,.12);border:1px solid var(--red-dim);color:var(--red);flex:none;padding:15px 20px}
+.btn.reset:hover{background:rgba(255,107,107,.2)}
+
+.saved{
+  position:fixed;top:calc(14px + env(safe-area-inset-top));left:50%;transform:translateX(-50%) translateY(-80px);
+  background:rgba(61,220,132,.15);border:1px solid var(--green-dim);color:var(--green);
+  padding:8px 18px;border-radius:30px;font-size:13px;z-index:50;transition:transform .35s cubic-bezier(.2,.8,.2,1);backdrop-filter:blur(8px);
+}
+.saved.show{transform:translateX(-50%) translateY(0)}
+.empty{text-align:center;color:var(--muted);padding:40px 0;font-size:14px}
 </style>
 </head>
-
 <body>
+<div class="wrap">
+  <header>
+    <div class="suit-row">♠ ♥ ♣ ♦</div>
+    <h1>Felt</h1>
+    <div class="tagline">Home Game Ledger</div>
+  </header>
 
-<div class="container">
+  <div class="setup">
+    <div class="field">
+      <label class="lbl" for="baseValue">Buy-in Value</label>
+      <input id="baseValue" class="inp" type="number" inputmode="numeric" value="2000">
+    </div>
+    <div class="field">
+      <label class="lbl" for="curSym">Currency</label>
+      <input id="curSym" class="inp" type="text" value="₹" maxlength="3">
+    </div>
+  </div>
 
-<h1>🃏 Poker Tracker ₹</h1>
+  <div class="stats">
+    <div class="stat"><div class="k">Pot In</div><div class="v" id="totalBuy">—</div></div>
+    <div class="stat"><div class="k">Cashed Out</div><div class="v" id="totalCash">—</div></div>
+    <div class="stat"><div class="k">On Table</div><div class="v" id="balance">—</div></div>
+  </div>
 
-<div class="card">
-    <div class="label">Base Buy-in Value (₹)</div>
-    <input id="baseValue" type="number" value="2000" onchange="calculate()">
-</div>
+  <div class="players" id="players"></div>
 
-<div id="players"></div>
-
-<button class="reset" onclick="resetAll()">Reset</button>
-
-<div class="card summary">
-    <div>Total Buy-in: ₹ <span id="totalBuy">0</span></div>
-    <div>Total Cash-out: ₹ <span id="totalCash">0</span></div>
-    <div>Balance: ₹ <span id="balance">0</span></div>
-</div>
-
-<div class="card settlement">
+  <div class="settle">
     <h3>💸 Who Pays Whom</h3>
     <div id="settlementList"></div>
+  </div>
 </div>
 
+<div class="dock">
+  <button class="btn add" onclick="addPlayer()">+ Add Player</button>
+  <button class="btn reset" onclick="resetAll()">Reset</button>
 </div>
+
+<div class="saved" id="toast">Saved</div>
 
 <script>
-const container = document.getElementById("players");
+const KEY="felt_poker_v1";
+let state={base:2000,cur:"₹",players:[]};
+let pid=0;
 
-let data = {};
-
-// Create players
-for (let i = 1; i <= 10; i++) {
-    data[i] = { buy: 0, cash: 0 };
-
-    const row = document.createElement("div");
-    row.className = "card player-card";
-
-    row.innerHTML = `
-        <div style="font-weight:bold;">🧑 Player ${i}</div>
-
-        <div>
-            <div class="label">Name</div>
-            <input id="name${i}" placeholder="Enter name">
-        </div>
-
-        <div>
-            <div class="label">Buy-in Chips</div>
-            <div class="chips">
-                <div class="chip" onclick="addChip(${i}, 'buy', 1)">+1</div>
-                <div class="chip" onclick="addChip(${i}, 'buy', 5)">+5</div>
-                <div class="chip" onclick="addChip(${i}, 'buy', 10)">+10</div>
-                <div class="chip minus" onclick="addChip(${i}, 'buy', -1)">-1</div>
-                <div class="chip minus" onclick="addChip(${i}, 'buy', -5)">-5</div>
-                <div class="chip minus" onclick="addChip(${i}, 'buy', -10)">-10</div>
-            </div>
-            <div class="value-box">
-                Units: <span id="buyUnits${i}">0</span> | ₹ <span id="buyAmt${i}">0</span>
-            </div>
-        </div>
-
-        <div>
-            <div class="label">Cash-out Chips</div>
-            <div class="chips">
-                <div class="chip" onclick="addChip(${i}, 'cash', 1)">+1</div>
-                <div class="chip" onclick="addChip(${i}, 'cash', 5)">+5</div>
-                <div class="chip" onclick="addChip(${i}, 'cash', 10)">+10</div>
-                <div class="chip minus" onclick="addChip(${i}, 'cash', -1)">-1</div>
-                <div class="chip minus" onclick="addChip(${i}, 'cash', -5)">-5</div>
-                <div class="chip minus" onclick="addChip(${i}, 'cash', -10)">-10</div>
-            </div>
-            <div class="value-box">
-                Units: <span id="cashUnits${i}">0</span> | ₹ <span id="cashAmt${i}">0</span>
-            </div>
-        </div>
-
-        <div>
-            <div class="label">Profit / Loss</div>
-            <div id="pl${i}">₹ 0</div>
-        </div>
-    `;
-
-    container.appendChild(row);
-}
-
-// Add / remove chips
-function addChip(id, type, val) {
-    data[id][type] += val;
-    if (data[id][type] < 0) data[id][type] = 0;
-    calculate();
-}
-
-// Main calculation
-function calculate() {
-    let base = parseFloat(document.getElementById("baseValue").value) || 2000;
-
-    let totalBuy = 0, totalCash = 0;
-    let players = [];
-
-    for (let i = 1; i <= 10; i++) {
-        let name = document.getElementById(`name${i}`).value || `P${i}`;
-
-        let buy = data[i].buy * base;
-        let cash = data[i].cash * base;
-
-        document.getElementById(`buyUnits${i}`).innerText = data[i].buy;
-        document.getElementById(`cashUnits${i}`).innerText = data[i].cash;
-        document.getElementById(`buyAmt${i}`).innerText = buy;
-        document.getElementById(`cashAmt${i}`).innerText = cash;
-
-        totalBuy += buy;
-        totalCash += cash;
-
-        let pl = cash - buy;
-
-        let el = document.getElementById(`pl${i}`);
-        el.innerText = `₹ ${pl}`;
-        el.className = pl > 0 ? "profit" : pl < 0 ? "loss" : "";
-
-        if (buy > 0 || cash > 0) {
-            players.push({ name, balance: pl });
-        }
+function load(){
+  try{
+    const raw=localStorage.getItem(KEY);
+    if(raw){
+      const s=JSON.parse(raw);
+      if(s&&Array.isArray(s.players)){state=s;}
     }
+  }catch(e){}
+  if(!state.players.length){
+    state.players=[mk("Player 1"),mk("Player 2")];
+  }
+  pid=state.players.reduce((m,p)=>Math.max(m,p.id),0);
+  document.getElementById("baseValue").value=state.base;
+  document.getElementById("curSym").value=state.cur;
+}
+function mk(name){return{id:++pid,name:name||"",buy:0,cash:0};}
 
-    document.getElementById("totalBuy").innerText = totalBuy;
-    document.getElementById("totalCash").innerText = totalCash;
-
-    let balance = totalCash - totalBuy;
-    document.getElementById("balance").innerText = balance;
-
-    calculateSettlement(players);
+let toastT;
+function save(){
+  state.base=parseFloat(document.getElementById("baseValue").value)||0;
+  state.cur=document.getElementById("curSym").value||"₹";
+  try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}
+  const t=document.getElementById("toast");
+  t.classList.add("show");clearTimeout(toastT);
+  toastT=setTimeout(()=>t.classList.remove("show"),1100);
 }
 
-// Settlement logic
-function calculateSettlement(players) {
-    let creditors = players.filter(p => p.balance > 0);
-    let debtors = players.filter(p => p.balance < 0)
-        .map(p => ({ ...p, balance: -p.balance }));
+const fmt=n=>state.cur+" "+Math.round(n).toLocaleString();
 
-    let result = "";
-    let i = 0, j = 0;
+function render(){
+  const wrap=document.getElementById("players");
+  wrap.innerHTML="";
+  if(!state.players.length){
+    wrap.innerHTML='<div class="empty">No players yet — tap “Add Player”.</div>';
+  }
+  state.players.forEach((p,idx)=>{
+    const init=(p.name.trim()[0]||(idx+1)).toUpperCase();
+    const el=document.createElement("div");
+    el.className="pcard";
+    el.style.animationDelay=(idx*40)+"ms";
+    el.innerHTML=`
+      <button class="remove" title="Remove" onclick="removePlayer(${p.id})">✕</button>
+      <div class="phead">
+        <div class="avatar" data-av="${p.id}">${init}</div>
+        <input class="pname" placeholder="Player ${idx+1}" value="${escAttr(p.name)}" oninput="setName(${p.id},this.value)">
+        <div class="pl-badge" data-pl="${p.id}">—</div>
+      </div>
+      <div class="seg">
+        <div class="seg-top"><span class="seg-lbl">Buy-in</span>
+          <span class="seg-val"><span data-bu="${p.id}">0</span> × → <b data-ba="${p.id}">—</b></span></div>
+        <div class="chips">
+          <div class="chip sub" onclick="chip(${p.id},'buy',-5)">−5</div>
+          <div class="chip sub" onclick="chip(${p.id},'buy',-1)">−1</div>
+          <div class="count" data-cb="${p.id}">${p.buy}</div>
+          <div class="chip add" onclick="chip(${p.id},'buy',1)">+1</div>
+          <div class="chip add" onclick="chip(${p.id},'buy',5)">+5</div>
+        </div>
+      </div>
+      <div class="seg">
+        <div class="seg-top"><span class="seg-lbl">Cash-out</span>
+          <span class="seg-val"><span data-cu="${p.id}">0</span> × → <b data-ca="${p.id}">—</b></span></div>
+        <div class="chips">
+          <div class="chip sub" onclick="chip(${p.id},'cash',-5)">−5</div>
+          <div class="chip sub" onclick="chip(${p.id},'cash',-1)">−1</div>
+          <div class="count" data-cc="${p.id}">${p.cash}</div>
+          <div class="chip add" onclick="chip(${p.id},'cash',1)">+1</div>
+          <div class="chip add" onclick="chip(${p.id},'cash',5)">+5</div>
+        </div>
+      </div>`;
+    wrap.appendChild(el);
+  });
+  calculate();
+}
 
-    while (i < debtors.length && j < creditors.length) {
-        let amt = Math.min(debtors[i].balance, creditors[j].balance);
+function escAttr(s){return String(s).replace(/"/g,"&quot;");}
 
-        result += `<div>${debtors[i].name} ➝ ${creditors[j].name} : ₹ ${amt}</div>`;
+function setName(id,v){
+  const p=state.players.find(p=>p.id===id);if(!p)return;
+  p.name=v;
+  const av=document.querySelector(`[data-av="${id}"]`);
+  if(av)av.textContent=(v.trim()[0]||"?").toUpperCase();
+  save();
+}
+function chip(id,type,val){
+  const p=state.players.find(p=>p.id===id);if(!p)return;
+  p[type]=Math.max(0,p[type]+val);
+  document.querySelector(`[data-${type==='buy'?'cb':'cc'}="${id}"]`).textContent=p[type];
+  calculate();save();
+}
+function addPlayer(){
+  state.players.push(mk("Player "+(state.players.length+1)));
+  pid=state.players.reduce((m,p)=>Math.max(m,p.id),0);
+  render();save();
+  window.scrollTo({top:document.body.scrollHeight,behavior:"smooth"});
+}
+function removePlayer(id){
+  state.players=state.players.filter(p=>p.id!==id);
+  render();save();
+}
+function resetAll(){
+  if(!confirm("Reset the whole table? This clears all players and chips."))return;
+  state.players=[mk("Player 1"),mk("Player 2")];
+  render();save();
+}
 
-        debtors[i].balance -= amt;
-        creditors[j].balance -= amt;
-
-        if (debtors[i].balance === 0) i++;
-        if (creditors[j].balance === 0) j++;
+function calculate(){
+  const base=parseFloat(document.getElementById("baseValue").value)||0;
+  let tBuy=0,tCash=0,active=[];
+  state.players.forEach(p=>{
+    const buy=p.buy*base, cash=p.cash*base, pl=cash-buy;
+    tBuy+=buy;tCash+=cash;
+    const set=(sel,txt)=>{const e=document.querySelector(sel);if(e)e.textContent=txt;};
+    set(`[data-bu="${p.id}"]`,p.buy);
+    set(`[data-cu="${p.id}"]`,p.cash);
+    set(`[data-ba="${p.id}"]`,fmt(buy));
+    set(`[data-ca="${p.id}"]`,fmt(cash));
+    const badge=document.querySelector(`[data-pl="${p.id}"]`);
+    const card=badge?badge.closest(".pcard"):null;
+    if(badge){
+      if(p.buy===0&&p.cash===0){badge.textContent="—";badge.className="pl-badge";}
+      else{badge.textContent=(pl>=0?"+":"−")+fmt(Math.abs(pl)).slice(state.cur.length);
+        badge.className="pl-badge "+(pl>0?"profit":pl<0?"loss":"");}
     }
-
-    document.getElementById("settlementList").innerHTML =
-        result || "All settled ✅";
+    if(card){card.classList.remove("loss","flat");
+      if(p.buy||p.cash){if(pl<0)card.classList.add("loss");else if(pl===0)card.classList.add("flat");}}
+    if(p.buy>0||p.cash>0)active.push({name:p.name.trim()||("Player"),bal:pl});
+  });
+  document.getElementById("totalBuy").textContent=fmt(tBuy);
+  document.getElementById("totalCash").textContent=fmt(tCash);
+  const bal=tCash-tBuy;
+  const be=document.getElementById("balance");
+  be.textContent=fmt(bal);
+  be.className="v "+(bal===0?"":bal>0?"ok":"bad");
+  settlement(active,bal);
 }
 
-// Reset
-function resetAll() {
-    for (let i = 1; i <= 10; i++) {
-        data[i] = { buy: 0, cash: 0 };
-        document.getElementById(`name${i}`).value = "";
+function settlement(players,bal){
+  const list=document.getElementById("settlementList");
+  if(players.length<2){list.innerHTML='<div class="settled">Add chips to at least two players.</div>';return;}
+  let cred=players.filter(p=>p.bal>0).map(p=>({...p})).sort((a,b)=>b.bal-a.bal);
+  let debt=players.filter(p=>p.bal<0).map(p=>({name:p.name,bal:-p.bal})).sort((a,b)=>b.bal-a.bal);
+  let out="",i=0,j=0;
+  while(i<debt.length&&j<cred.length){
+    const amt=Math.min(debt[i].bal,cred[j].bal);
+    if(amt>0.5){
+      out+=`<div class="pay"><span class="from">${escHtml(debt[i].name)}</span>
+        <span class="arrow">▸</span><span class="to">${escHtml(cred[j].name)}</span>
+        <span class="amt">${fmt(amt)}</span></div>`;
     }
-    calculate();
+    debt[i].bal-=amt;cred[j].bal-=amt;
+    if(debt[i].bal<0.5)i++;
+    if(cred[j].bal<0.5)j++;
+  }
+  list.innerHTML=out||'<div class="settled">All square — nobody owes a thing ✅</div>';
+  if(Math.abs(bal)>0.5){
+    list.innerHTML+=`<div class="warn">⚠ Pot off by ${fmt(Math.abs(bal))} — chips counted don’t balance.</div>`;
+  }
 }
+function escHtml(s){return String(s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));}
 
-// Initial load
-calculate();
+document.getElementById("baseValue").addEventListener("input",()=>{calculate();save();});
+document.getElementById("curSym").addEventListener("input",()=>{calculate();save();});
+
+load();render();
 </script>
-
 </body>
 </html>
