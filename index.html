@@ -144,7 +144,7 @@ h1{
   background:rgba(0,0,0,.3);border-radius:11px;border:1px solid var(--line);
 }
  
-/* ---- Editable cash-out money field (red) ---- */
+/* ---- Editable extra cash money field (red) ---- */
 .cashrow{display:flex;align-items:center;gap:8px;margin-top:9px}
 .cashrow .clbl{font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);white-space:nowrap}
 .cash-input-shell{flex:1;display:flex;align-items:center;gap:6px;
@@ -276,7 +276,7 @@ function load(){
   document.getElementById("baseValue").value=state.base;
   document.getElementById("curSym").value=state.cur;
 }
-// cashAmt: null = use chip count × base; number = exact override
+// cashAmt: null = no extra; number = extra cash added on top of chips × base
 function mk(name){return{id:++pid,name:name||"",buy:0,cash:0,cashAmt:null};}
  
 let toastT;
@@ -291,9 +291,10 @@ function save(){
  
 const fmt=n=>state.cur+" "+Math.round(n).toLocaleString();
  
-// cash value actually used: explicit override if set, else chips × base
+// cash value actually used: chips × base PLUS any extra cash entered
 function cashValue(p,base){
-  return (p.cashAmt!==null && p.cashAmt!==undefined) ? p.cashAmt : p.cash*base;
+  const extra=(p.cashAmt!==null && p.cashAmt!==undefined) ? p.cashAmt : 0;
+  return p.cash*base + extra;
 }
  
 function render(){
@@ -336,11 +337,11 @@ function render(){
           <div class="chip add" onclick="chip(${p.id},'cash',5)">+5</div>
         </div>
         <div class="cashrow">
-          <span class="clbl">Exact</span>
+          <span class="clbl">Extra</span>
           <label class="cash-input-shell">
             <span class="sym" data-sym="${p.id}">${escHtml(state.cur)}</span>
             <input class="cash-money" type="number" inputmode="decimal" min="0"
-              placeholder="exact cash-out (overrides chips)"
+              placeholder="extra cash (adds to chips)"
               value="${p.cashAmt!==null&&p.cashAmt!==undefined?p.cashAmt:''}"
               oninput="setCashAmt(${p.id},this.value)">
           </label>
@@ -367,7 +368,7 @@ function chip(id,type,val){
   document.querySelector(`[data-${type==='buy'?'cb':'cc'}="${id}"]`).textContent=p[type];
   calculate();save();
 }
-// typing in the red exact field overrides the chip-based cash-out; blank = back to chips
+// typing in the red extra field adds to the chip-based cash-out; blank = no extra
 function setCashAmt(id,v){
   const p=state.players.find(p=>p.id===id);if(!p)return;
   const t=v.trim();
@@ -395,7 +396,7 @@ function calculate(){
   let tBuy=0,tCash=0,active=[];
   state.players.forEach(p=>{
     const buy=p.buy*base;
-    const cash=cashValue(p,base);          // exact override or chips × base
+    const cash=cashValue(p,base);          // chips × base + extra cash
     const pl=cash-buy;                       // profit/loss against full buy-in
     tBuy+=buy;tCash+=cash;
     const set=(sel,txt)=>{const e=document.querySelector(sel);if(e)e.textContent=txt;};
@@ -405,14 +406,11 @@ function calculate(){
     set(`[data-ca="${p.id}"]`,fmt(cash));
     set(`[data-sym="${p.id}"]`,state.cur);
  
-    // hint shows how the exact entry compares against buy-in
+    // hint shows the chip cash-out plus the extra entered
     const hint=document.querySelector(`[data-hint="${p.id}"]`);
     if(hint){
       if(p.cashAmt!==null&&p.cashAmt!==undefined){
-        const short=buy-cash;
-        if(short>0.5) hint.innerHTML=`Using exact cash-out. Short of buy-in by <b>${fmt(short)}</b> (this comes off the buy-in).`;
-        else if(short<-0.5) hint.innerHTML=`Using exact cash-out. Up <b>${fmt(-short)}</b> over buy-in.`;
-        else hint.innerHTML=`Using exact cash-out. Even with buy-in.`;
+        hint.innerHTML=`Chips <b>${fmt(p.cash*base)}</b> + extra <b>${fmt(p.cashAmt)}</b> = total cash-out <b>${fmt(cash)}</b>.`;
       } else {
         hint.textContent="";
       }
