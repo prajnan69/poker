@@ -48,7 +48,7 @@ body::before{
   mix-blend-mode:overlay;
 }
 .wrap{max-width:560px;margin:auto;position:relative;z-index:1}
-
+ 
 /* ---- Header ---- */
 header{text-align:center;padding:26px 0 18px}
 .suit-row{font-size:15px;letter-spacing:8px;color:var(--gold);opacity:.75;margin-bottom:6px}
@@ -58,7 +58,7 @@ h1{
   -webkit-background-clip:text;background-clip:text;color:transparent;
 }
 .tagline{color:var(--muted);font-size:13px;letter-spacing:1.5px;text-transform:uppercase;margin-top:4px}
-
+ 
 /* ---- Setup bar ---- */
 .setup{
   background:linear-gradient(165deg,var(--card-hi),var(--card));
@@ -75,7 +75,7 @@ h1{
 }
 .inp:focus{outline:none;border-color:var(--gold-soft);box-shadow:0 0 0 3px rgba(232,196,104,.12)}
 .inp::placeholder{color:#5f7468}
-
+ 
 /* ---- Stats strip ---- */
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:16px}
 .stat{
@@ -85,7 +85,7 @@ h1{
 .stat .k{font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted)}
 .stat .v{font-family:'Fraunces',serif;font-weight:600;font-size:19px;margin-top:3px;color:var(--cream)}
 .stat .v.ok{color:var(--green)} .stat .v.bad{color:var(--red)}
-
+ 
 /* ---- Player cards ---- */
 .players{display:flex;flex-direction:column;gap:13px}
 .pcard{
@@ -101,7 +101,7 @@ h1{
 }
 .pcard.loss::before{background:linear-gradient(var(--red),var(--red-dim))}
 .pcard.flat::before{background:linear-gradient(var(--gold),var(--gold-soft));opacity:.3}
-
+ 
 .phead{display:flex;align-items:center;gap:11px;margin-bottom:14px}
 .avatar{
   width:40px;height:40px;border-radius:12px;flex:none;display:grid;place-items:center;
@@ -120,14 +120,14 @@ h1{
   padding:3px 0;color:var(--muted);
 }
 .pl-badge.profit{color:var(--green)} .pl-badge.loss{color:var(--red)}
-
+ 
 .seg{margin-bottom:11px}
 .seg:last-child{margin-bottom:0}
 .seg-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
 .seg-lbl{font-size:11px;letter-spacing:1.3px;text-transform:uppercase;color:var(--muted)}
 .seg-val{font-size:13px;color:var(--cream)}
 .seg-val b{font-family:'Fraunces',serif;color:var(--gold);font-weight:600}
-
+ 
 .chips{display:flex;gap:6px}
 .chip{
   flex:1;border-radius:11px;padding:9px 0;font-size:14px;font-weight:600;cursor:pointer;
@@ -143,6 +143,25 @@ h1{
   font-weight:600;font-size:17px;color:var(--cream);
   background:rgba(0,0,0,.3);border-radius:11px;border:1px solid var(--line);
 }
+ 
+/* ---- Editable cash-out money field (red) ---- */
+.cashrow{display:flex;align-items:center;gap:8px;margin-top:9px}
+.cashrow .clbl{font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.cash-input-shell{flex:1;display:flex;align-items:center;gap:6px;
+  background:rgba(255,107,107,.07);border:1px solid var(--red-dim);border-radius:11px;
+  padding:8px 12px;transition:border-color .2s, box-shadow .2s;}
+.cash-input-shell:focus-within{border-color:var(--red);box-shadow:0 0 0 3px rgba(255,107,107,.14)}
+.cash-input-shell .sym{color:var(--red);font-weight:600;font-size:15px}
+.cash-money{
+  flex:1;width:100%;background:transparent;border:none;outline:none;
+  color:var(--red);font-family:'Fraunces',serif;font-weight:600;font-size:18px;
+}
+.cash-money::placeholder{color:rgba(255,107,107,.4);font-family:'Outfit';font-weight:500}
+.cash-money::-webkit-outer-spin-button,.cash-money::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.cash-money[type=number]{-moz-appearance:textfield}
+.cash-hint{font-size:11px;color:var(--muted);margin-top:6px}
+.cash-hint b{color:var(--gold);font-family:'Fraunces',serif;font-weight:600}
+ 
 .pcard .remove{
   position:absolute;top:11px;right:11px;width:26px;height:26px;border-radius:8px;
   background:rgba(0,0,0,.25);border:1px solid var(--line);color:var(--muted);
@@ -150,7 +169,7 @@ h1{
 }
 .pcard:hover .remove{display:grid}
 .pcard .remove:hover{color:var(--red);border-color:var(--red-dim)}
-
+ 
 /* ---- Settlement ---- */
 .settle{
   margin-top:18px;background:linear-gradient(168deg,var(--card-hi),var(--card));
@@ -168,7 +187,7 @@ h1{
 .pay .amt{margin-left:auto;font-family:'Fraunces',serif;font-weight:600;color:var(--gold);white-space:nowrap}
 .settled{text-align:center;color:var(--muted);padding:14px 0;font-size:15px}
 .warn{text-align:center;color:var(--red);font-size:13px;padding:6px 0 0}
-
+ 
 /* ---- Floating action bar ---- */
 .dock{
   position:fixed;left:0;right:0;bottom:0;z-index:20;
@@ -185,7 +204,7 @@ h1{
 .btn.add:hover{filter:brightness(1.06)}
 .btn.reset{background:rgba(255,107,107,.12);border:1px solid var(--red-dim);color:var(--red);flex:none;padding:15px 20px}
 .btn.reset:hover{background:rgba(255,107,107,.2)}
-
+ 
 .saved{
   position:fixed;top:calc(14px + env(safe-area-inset-top));left:50%;transform:translateX(-50%) translateY(-80px);
   background:rgba(61,220,132,.15);border:1px solid var(--green-dim);color:var(--green);
@@ -202,7 +221,7 @@ h1{
     <h1>Felt</h1>
     <div class="tagline">Home Game Ledger</div>
   </header>
-
+ 
   <div class="setup">
     <div class="field">
       <label class="lbl" for="baseValue">Buy-in Value</label>
@@ -213,33 +232,33 @@ h1{
       <input id="curSym" class="inp" type="text" value="₹" maxlength="3">
     </div>
   </div>
-
+ 
   <div class="stats">
     <div class="stat"><div class="k">Pot In</div><div class="v" id="totalBuy">—</div></div>
     <div class="stat"><div class="k">Cashed Out</div><div class="v" id="totalCash">—</div></div>
     <div class="stat"><div class="k">On Table</div><div class="v" id="balance">—</div></div>
   </div>
-
+ 
   <div class="players" id="players"></div>
-
+ 
   <div class="settle">
     <h3>💸 Who Pays Whom</h3>
     <div id="settlementList"></div>
   </div>
 </div>
-
+ 
 <div class="dock">
   <button class="btn add" onclick="addPlayer()">+ Add Player</button>
   <button class="btn reset" onclick="resetAll()">Reset</button>
 </div>
-
+ 
 <div class="saved" id="toast">Saved</div>
-
+ 
 <script>
-const KEY="felt_poker_v1";
+const KEY="felt_poker_v2";
 let state={base:2000,cur:"₹",players:[]};
 let pid=0;
-
+ 
 function load(){
   try{
     const raw=localStorage.getItem(KEY);
@@ -248,6 +267,8 @@ function load(){
       if(s&&Array.isArray(s.players)){state=s;}
     }
   }catch(e){}
+  // migrate / ensure cashAmt field exists
+  state.players.forEach(p=>{ if(typeof p.cashAmt!=="number") p.cashAmt=null; });
   if(!state.players.length){
     state.players=[mk("Player 1"),mk("Player 2")];
   }
@@ -255,8 +276,9 @@ function load(){
   document.getElementById("baseValue").value=state.base;
   document.getElementById("curSym").value=state.cur;
 }
-function mk(name){return{id:++pid,name:name||"",buy:0,cash:0};}
-
+// cashAmt: null = use chip count × base; number = exact override
+function mk(name){return{id:++pid,name:name||"",buy:0,cash:0,cashAmt:null};}
+ 
 let toastT;
 function save(){
   state.base=parseFloat(document.getElementById("baseValue").value)||0;
@@ -266,9 +288,14 @@ function save(){
   t.classList.add("show");clearTimeout(toastT);
   toastT=setTimeout(()=>t.classList.remove("show"),1100);
 }
-
+ 
 const fmt=n=>state.cur+" "+Math.round(n).toLocaleString();
-
+ 
+// cash value actually used: explicit override if set, else chips × base
+function cashValue(p,base){
+  return (p.cashAmt!==null && p.cashAmt!==undefined) ? p.cashAmt : p.cash*base;
+}
+ 
 function render(){
   const wrap=document.getElementById("players");
   wrap.innerHTML="";
@@ -308,14 +335,25 @@ function render(){
           <div class="chip add" onclick="chip(${p.id},'cash',1)">+1</div>
           <div class="chip add" onclick="chip(${p.id},'cash',5)">+5</div>
         </div>
+        <div class="cashrow">
+          <span class="clbl">Exact</span>
+          <label class="cash-input-shell">
+            <span class="sym" data-sym="${p.id}">${escHtml(state.cur)}</span>
+            <input class="cash-money" type="number" inputmode="decimal" min="0"
+              placeholder="exact cash-out (overrides chips)"
+              value="${p.cashAmt!==null&&p.cashAmt!==undefined?p.cashAmt:''}"
+              oninput="setCashAmt(${p.id},this.value)">
+          </label>
+        </div>
+        <div class="cash-hint" data-hint="${p.id}"></div>
       </div>`;
     wrap.appendChild(el);
   });
   calculate();
 }
-
+ 
 function escAttr(s){return String(s).replace(/"/g,"&quot;");}
-
+ 
 function setName(id,v){
   const p=state.players.find(p=>p.id===id);if(!p)return;
   p.name=v;
@@ -327,6 +365,13 @@ function chip(id,type,val){
   const p=state.players.find(p=>p.id===id);if(!p)return;
   p[type]=Math.max(0,p[type]+val);
   document.querySelector(`[data-${type==='buy'?'cb':'cc'}="${id}"]`).textContent=p[type];
+  calculate();save();
+}
+// typing in the red exact field overrides the chip-based cash-out; blank = back to chips
+function setCashAmt(id,v){
+  const p=state.players.find(p=>p.id===id);if(!p)return;
+  const t=v.trim();
+  p.cashAmt = t==="" ? null : Math.max(0,parseFloat(t)||0);
   calculate();save();
 }
 function addPlayer(){
@@ -344,28 +389,46 @@ function resetAll(){
   state.players=[mk("Player 1"),mk("Player 2")];
   render();save();
 }
-
+ 
 function calculate(){
   const base=parseFloat(document.getElementById("baseValue").value)||0;
   let tBuy=0,tCash=0,active=[];
   state.players.forEach(p=>{
-    const buy=p.buy*base, cash=p.cash*base, pl=cash-buy;
+    const buy=p.buy*base;
+    const cash=cashValue(p,base);          // exact override or chips × base
+    const pl=cash-buy;                       // profit/loss against full buy-in
     tBuy+=buy;tCash+=cash;
     const set=(sel,txt)=>{const e=document.querySelector(sel);if(e)e.textContent=txt;};
     set(`[data-bu="${p.id}"]`,p.buy);
     set(`[data-cu="${p.id}"]`,p.cash);
     set(`[data-ba="${p.id}"]`,fmt(buy));
     set(`[data-ca="${p.id}"]`,fmt(cash));
+    set(`[data-sym="${p.id}"]`,state.cur);
+ 
+    // hint shows how the exact entry compares against buy-in
+    const hint=document.querySelector(`[data-hint="${p.id}"]`);
+    if(hint){
+      if(p.cashAmt!==null&&p.cashAmt!==undefined){
+        const short=buy-cash;
+        if(short>0.5) hint.innerHTML=`Using exact cash-out. Short of buy-in by <b>${fmt(short)}</b> (this comes off the buy-in).`;
+        else if(short<-0.5) hint.innerHTML=`Using exact cash-out. Up <b>${fmt(-short)}</b> over buy-in.`;
+        else hint.innerHTML=`Using exact cash-out. Even with buy-in.`;
+      } else {
+        hint.textContent="";
+      }
+    }
+ 
     const badge=document.querySelector(`[data-pl="${p.id}"]`);
     const card=badge?badge.closest(".pcard"):null;
+    const touched=p.buy>0||p.cash>0||(p.cashAmt!==null&&p.cashAmt!==undefined);
     if(badge){
-      if(p.buy===0&&p.cash===0){badge.textContent="—";badge.className="pl-badge";}
+      if(!touched){badge.textContent="—";badge.className="pl-badge";}
       else{badge.textContent=(pl>=0?"+":"−")+fmt(Math.abs(pl)).slice(state.cur.length);
         badge.className="pl-badge "+(pl>0?"profit":pl<0?"loss":"");}
     }
     if(card){card.classList.remove("loss","flat");
-      if(p.buy||p.cash){if(pl<0)card.classList.add("loss");else if(pl===0)card.classList.add("flat");}}
-    if(p.buy>0||p.cash>0)active.push({name:p.name.trim()||("Player"),bal:pl});
+      if(touched){if(pl<0)card.classList.add("loss");else if(pl===0)card.classList.add("flat");}}
+    if(touched)active.push({name:p.name.trim()||("Player"),bal:pl});
   });
   document.getElementById("totalBuy").textContent=fmt(tBuy);
   document.getElementById("totalCash").textContent=fmt(tCash);
@@ -375,7 +438,7 @@ function calculate(){
   be.className="v "+(bal===0?"":bal>0?"ok":"bad");
   settlement(active,bal);
 }
-
+ 
 function settlement(players,bal){
   const list=document.getElementById("settlementList");
   if(players.length<2){list.innerHTML='<div class="settled">Add chips to at least two players.</div>';return;}
@@ -399,10 +462,10 @@ function settlement(players,bal){
   }
 }
 function escHtml(s){return String(s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));}
-
+ 
 document.getElementById("baseValue").addEventListener("input",()=>{calculate();save();});
 document.getElementById("curSym").addEventListener("input",()=>{calculate();save();});
-
+ 
 load();render();
 </script>
 </body>
